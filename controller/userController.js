@@ -9,6 +9,29 @@ import User from '../models/userModel.js';
 const ACCESS_SECRET_KEY = process.env.ACCESS_SECRET_KEY;
 
 
+export const authenticateToken = (req, res, next) => {
+    const { token } = req.headers;
+
+    // console.log(req.headers);
+
+    jwt.verify(token, ACCESS_SECRET_KEY, (err, user) => {
+
+        if (err) {
+            // console.log(err, err.message);
+
+            res.status(403).json({ msg: 'TOKEN NOT VERIFIED' });
+        }
+        else {
+            // console.log(req.user);
+            req.user = user;
+            // console.log(req.user);
+
+            // console.log('this user is token verified');
+            next();
+        }
+    });
+}
+
 
 export const loginUser = async (req, res) => {
 
@@ -30,7 +53,7 @@ export const loginUser = async (req, res) => {
                 // console.log(32, accessToken);
 
 
-                return res.status(200).json({ accessToken, msg: 'Login successfull' });
+                return res.status(200).json({ accessToken, user, msg: 'Login successfull' });
             }
             else {
                 return res.status(400).json({ msg: 'Password does not match' });
@@ -78,12 +101,21 @@ export const signupUser = async (req, res) => {
         await newUser.save();
         // console.log(newUser);
 
-        return res.status(200).json({ msg: 'Signup successfull', accessToken });
+        return res.status(200).json({ msg: 'Signup successfull', accessToken, user: newUser });
     }
     catch (err) {
         // console.log(81, err);
         return res.status(500).json({ msg: 'Error while signup the user' });
     }
+}
+
+export const premiumUser = (req, res) => {
+    // console.log(req.user);
+    // console.log(req.headers);
+
+    // console.log('premium user');
+
+    res.status(200).json({ msg: 'This is premium user' });
 }
 
 
