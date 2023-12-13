@@ -16,15 +16,15 @@ router.post('/signup', signupUser);
 router.get('/premium', authenticateToken, premiumUser);
 
 router.post('/create', authenticateToken, createWeeklist);
-router.put('/updateTask', authenticateToken, checkDeadlineForTask, updateTask);
-router.delete('/deleteTask', authenticateToken, checkDeadlineForTask, deleteTask);
+router.put('/updateTask/:weeklistId', authenticateToken, checkDeadlineForTask, updateTask);
+router.delete('/deleteTask/:weeklistId/:taskInd', authenticateToken, checkDeadlineForTask, deleteTask);
 router.post('/markUnmarkTask', authenticateToken, checkDeadlineForWeeklist, markUnmarkTask);
-router.get('/getActiveWeeklistWithTime', authenticateToken, getUserActiveWeeklistWithTime);
+router.get('/getActiveWeeklistWithTime/:userId', authenticateToken, getUserActiveWeeklistWithTime);
 
-router.get('/weeklist/:id', authenticateToken, getWeeklist);
+router.get('/weeklist/:weeklistId', authenticateToken, getWeeklist);
 router.get('/feed', authenticateToken, getAllActiveWeeklist);
 router.post('/markUnmarkWeeklist', authenticateToken, checkDeadlineForWeeklist, markUnmarkWeeklist);
-router.get('/weeklists', authenticateToken, getAllWeeklistsOfUser);
-router.delete('/delete/:id', authenticateToken, deleteWeeklist);
+router.get('/weeklists/:userId', authenticateToken, getAllWeeklistsOfUser);
+router.delete('/delete/:weeklistId', authenticateToken, deleteWeeklist);
 
 export default router;

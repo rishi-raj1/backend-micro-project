@@ -67,7 +67,7 @@ export const createWeeklist = async (req, res) => {
 
 export const checkDeadlineForTask = async (req, res, next) => {
     try {
-        const { weeklistId } = req.body;
+        const { weeklistId } = req.params;
 
         const weeklist = await Weeklist.findById(weeklistId);
         const milliseconds = new Date() - weeklist.createdAt;
@@ -86,21 +86,21 @@ export const checkDeadlineForTask = async (req, res, next) => {
 };
 
 
-export const deleteTask = async (req, res) => {
+export const updateTask = async (req, res) => {
     try {
-        const { weeklistId, taskInd } = req.body;
+        const { weeklistId } = req.params;
+        const { taskInd, taskVal } = req.body;
 
         const weeklist = await Weeklist.findById(weeklistId);
-        console.log(weeklist);
+        // console.log(weeklist);
 
-        const arr = weeklist.tasks.filter((item, ind) => {
-            return ind !== taskInd;
-        });
+        let arr = [...weeklist.tasks];
+        arr[taskInd].description = taskVal;
 
         const updatedWeeklist = await Weeklist.findByIdAndUpdate(weeklistId, { tasks: arr });
-        console.log(updatedWeeklist);
+        // console.log(updatedWeeklist);
 
-        return res.status(200).json({ msg: 'Task deleted successfully', updatedWeeklist });
+        return res.status(200).json({ msg: 'Task updated successfully', updatedWeeklist });
     }
     catch (err) {
         return res.status(500).json({ msg: err.message });
@@ -108,20 +108,21 @@ export const deleteTask = async (req, res) => {
 };
 
 
-export const updateTask = async (req, res) => {
+export const deleteTask = async (req, res) => {
     try {
-        const { weeklistId, taskInd, taskVal } = req.body;
+        const { weeklistId, taskInd } = req.params;
 
         const weeklist = await Weeklist.findById(weeklistId);
-        console.log(weeklist);
+        // console.log(weeklist);
 
-        let arr = [...weeklist.tasks];
-        arr[taskInd].description = taskVal;
+        const arr = weeklist.tasks.filter((item, ind) => {
+            return ind !== taskInd;
+        });
 
         const updatedWeeklist = await Weeklist.findByIdAndUpdate(weeklistId, { tasks: arr });
-        console.log(updatedWeeklist);
+        // console.log(updatedWeeklist);
 
-        return res.status(200).json({ msg: 'Task updated successfully', updatedWeeklist });
+        return res.status(200).json({ msg: 'Task deleted successfully', updatedWeeklist });
     }
     catch (err) {
         return res.status(500).json({ msg: err.message });
@@ -135,7 +136,7 @@ export const markUnmarkTask = async (req, res) => {
         const { weeklistId, taskInd, mark } = req.body;
 
         const weeklist = await Weeklist.findById(weeklistId);
-        console.log(weeklist);
+        // console.log(weeklist);
 
         let arr = [...weeklist.tasks];
         let completed = false;
@@ -166,7 +167,7 @@ export const markUnmarkTask = async (req, res) => {
 
 
         const updatedWeeklist = await Weeklist.findByIdAndUpdate(weeklistId, { tasks: arr, isCompleted: completed });
-        console.log(updatedWeeklist);
+        // console.log(updatedWeeklist);
 
         return res.status(200).json({ msg: 'Task updated successfully', updatedWeeklist });
     }
@@ -177,7 +178,7 @@ export const markUnmarkTask = async (req, res) => {
 
 
 export const getUserActiveWeeklistWithTime = async (req, res) => {
-    const { userId } = req.body;
+    const { userId } = req.params;
 
     try {
         const weeklists = await Weeklist.find({ userId });
@@ -215,7 +216,7 @@ export const getUserActiveWeeklistWithTime = async (req, res) => {
                 return item;
             })
 
-            console.log(activeWeeklist);
+            // console.log(activeWeeklist);
 
             return res.status(200).json({ msg: 'All active weeklists in database', activeWeeklist });
         }
@@ -231,7 +232,7 @@ export const getUserActiveWeeklistWithTime = async (req, res) => {
 
 export const getWeeklist = async (req, res) => {
     try {
-        const weeklistId = req.params.id;
+        const { weeklistId } = req.params;
 
         const weeklist = await Weeklist.findById(weeklistId);
 
@@ -268,7 +269,7 @@ export const getAllActiveWeeklist = async (req, res) => {
                 return check(item);
             })
 
-            console.log(activeWeeklist);
+            // console.log(activeWeeklist);
 
             return res.status(200).json({ msg: 'All active weeklists in database', activeWeeklist });
         }
@@ -308,7 +309,7 @@ export const markUnmarkWeeklist = async (req, res) => {
         const { weeklistId, mark } = req.body;
 
         const updatedWeeklist = await Weeklist.findByIdAndUpdate(weeklistId, { markWeeklist: mark });
-        console.log(updatedWeeklist);
+        // console.log(updatedWeeklist);
 
         if (mark) {
             return res.status(200).json({ msg: 'Weeklist marked successfully', updatedWeeklist });
@@ -325,7 +326,7 @@ export const markUnmarkWeeklist = async (req, res) => {
 
 export const getAllWeeklistsOfUser = async (req, res) => {
     try {
-        const { userId } = req.body;
+        const { userId } = req.params;
 
         const weeklists = await Weeklist.find({ userId });
 
@@ -344,7 +345,7 @@ export const getAllWeeklistsOfUser = async (req, res) => {
 
 export const deleteWeeklist = async (req, res) => {
     try {
-        const weeklistId = req.params.id;
+        const { weeklistId } = req.params;
 
         const deletedDocument = await Weeklist.findByIdAndDelete(weeklistId);
 
