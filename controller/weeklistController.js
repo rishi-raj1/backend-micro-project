@@ -310,7 +310,12 @@ export const markUnmarkWeeklist = async (req, res) => {
         const updatedWeeklist = await Weeklist.findByIdAndUpdate(weeklistId, { markWeeklist: mark });
         console.log(updatedWeeklist);
 
-        return res.status(200).json({ msg: 'Weeklist updated successfully', updatedWeeklist });
+        if (mark) {
+            return res.status(200).json({ msg: 'Weeklist marked successfully', updatedWeeklist });
+        }
+        else {
+            return res.status(200).json({ msg: 'Weeklist unmarked successfully', updatedWeeklist });
+        }
     }
     catch (err) {
         return res.status(500).json({ msg: err.message });
@@ -355,14 +360,3 @@ export const deleteWeeklist = async (req, res) => {
         return res.status(500).json({ msg: err.message }); // status code may be wrong with respect to the given error
     }
 };
-
-
-
-
-
-
-
-
-
-
-
